@@ -14,6 +14,14 @@
             font-family: 'Inter', sans-serif;
             user-select: none;
             -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+
+        /* Rasm va elementlarni sudrab o'tishni taqiqlash */
+        img, a {
+            -webkit-user-drag: none;
+            user-drag: none;
         }
 
         .glass-card {
@@ -314,15 +322,64 @@
             el.classList.toggle('active');
         }
 
-        document.addEventListener('copy', e => e.preventDefault());
-        document.addEventListener('contextmenu', e => e.preventDefault());
-        document.addEventListener('selectstart', e => e.preventDefault());
+        // --- HIMOYA TIZIMI ---
 
+        // Nusxalashni taqiqlash
+        document.addEventListener('copy', e => {
+            e.preventDefault();
+            return false;
+        });
+
+        // Sichqonchaning o'ng tugmasini bloklash
+        document.addEventListener('contextmenu', e => {
+            e.preventDefault();
+            return false;
+        });
+
+        // Matnni belgilashni bloklash (JS orqali qo'shimcha)
+        document.addEventListener('selectstart', e => {
+            e.preventDefault();
+            return false;
+        });
+
+        // Klaviatura kombinatsiyalarini bloklash
         document.addEventListener('keydown', e => {
-            if (e.ctrlKey && (e.key.toLowerCase() === 'c' || e.key.toLowerCase() === 's')) {
+            // Ctrl+C, Ctrl+V, Ctrl+U (Kodni ko'rish), Ctrl+S (Saqlash)
+            if (e.ctrlKey && (
+                e.key === 'c' || 
+                e.key === 'C' || 
+                e.key === 'u' || 
+                e.key === 'U' || 
+                e.key === 's' || 
+                e.key === 'S' || 
+                e.key === 'v' || 
+                e.key === 'V' || 
+                e.key === 'p' || 
+                e.key === 'P'
+            )) {
                 e.preventDefault();
+                return false;
+            }
+
+            // F12 (Developer Tools) va Ctrl+Shift+I / J
+            if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C'))) {
+                e.preventDefault();
+                return false;
             }
         });
+
+        // Console orqali kodni tekshirishni qiyinlashtirish
+        setInterval(() => {
+            (function() {
+                try {
+                    (function (a) {
+                        return (function (a) {
+                            return Function('return Array(a).join("p")') (a);
+                        }) (a);
+                    }) (100);
+                } catch (e) {}
+            })();
+        }, 1000);
     </script>
 
 </body>
